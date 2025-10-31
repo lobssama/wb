@@ -23,32 +23,42 @@ dns:
     'geosite:private': 
         - https://doh.pub/dns-query
         - https://dns.alidns.com/dns-query
+    'rule-set:geoip-cn,geosite-cn':
+        - https://doh.pub/dns-query
+        - https://dns.alidns.com/dns-query
   nameserver:
     - https://1.1.1.1/dns-query
     - https://1.0.0.1/dns-query
+    
 proxy-providers:
-  # LobselXR:
-    # type: http
-    # path: ./profiles/LobselXR.yml
-    # url: https://raw.githubusercontent.com/Lobs1994/hosts/refs/heads/main/WJIdvsjD6BSN
-    # interval: 86400
-    # health-check:
-      # enable: true
-      # url: http://www.gstatic.com/generate_204
-      # interval: 3600
-      
   test:
     type: http
     path: ./profiles/test.yml
-    url: https://igdux.top/~Clash
+    url: https://tt.vg/WangCai
     interval: 86400
     health-check:
       enable: true
       url: http://www.gstatic.com/generate_204
       interval: 3600
+      
 proxies:
     - { name: '闲鱼唯一ID：LobselXR智能设备', type: vmess, server: alicdn.com, port: 443, uuid: 37c5c02a-45ca-4c5c-a5c0-e8238571d11a, alterId: 0, cipher: auto, udp: true, tls: true, skip-cert-verify: true, servername: alicdn.com }
     - { name: '淘宝唯一ID：LobselXR智能设备', type: vmess, server: alicdn.com, port: 443, uuid: 37c5c02a-45ca-4c5c-a5c0-e8238571d11a, alterId: 0, cipher: auto, udp: true, tls: true, skip-cert-verify: true, servername: alicdn.com }
+
+    - name: "tuic-jp"
+      type: tuic
+      server: 47.79.84.96
+      port: 8668
+      uuid: 63a97cea-c329-4375-8236-ce3806d35d44
+      password: zxc17395555
+      # heartbeat-interval: 10000
+      congestion-controller: bbr
+      alpn: [h3]
+      disable-sni: true
+      reduce-rtt: false
+      udp-relay-mode: quic
+      tls: true
+      sni: apple.com
 
     - name: "S1"
       type: vless
@@ -106,8 +116,8 @@ proxies:
 
     - name: S_2
       type: hysteria2
-      server: 51.159.111.32
-      port: 5355
+      server: 2604:6600::5cb
+      port: 22222
       password: dongtaiwang.com
       up: "11 Mbps"
       down: "55 Mbps"
@@ -146,8 +156,8 @@ proxies:
         
     - name: S_5
       type: hysteria2
-      server: 108.181.22.213
-      port: 15167
+      server: 163.172.21.105
+      port: 5355
       password: dongtaiwang.com
       up: "11 Mbps"
       down: "55 Mbps"
@@ -158,8 +168,8 @@ proxies:
       
     - name: S_6
       type: hysteria
-      server: 108.181.24.77
-      port: 37872
+      server: 62.210.127.217
+      port: 40099
       # ports: 40000-50000
       auth-str: dongtaiwang.com
       obfs: ""
@@ -257,7 +267,6 @@ proxies:
       down: "55 Mbps"
       
 
-
 proxy-groups:  
   - name: PROXY
     type: select
@@ -284,6 +293,7 @@ proxy-groups:
       - S_10
       - S_11
       - S_12
+
       
   - name: LobselXR-test
     type: load-balance
@@ -293,9 +303,26 @@ proxy-groups:
     use:
       - test
 
-      
+
+rule-providers:
+  geoip-cn:
+    type: http
+    behavior: domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geoip/cn.yaml"
+    path: ./ruleset/geoip-cn.yaml
+    interval: 86400
+    
+  geosite-cn:
+    type: http
+    behavior: domain
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/cn.yaml"
+    path: ./ruleset/geosite-cn.yaml
+    interval: 86400
+
     
 rules:
+  - RULE-SET,geosite-cn,DIRECT
+  - RULE-SET,geoip-cn,DIRECT,no-resolve
   - GEOIP,private,DIRECT,no-resolve
   - GEOIP,LAN,DIRECT,no-resolve
   - GEOIP,CN,DIRECT,no-resolve
